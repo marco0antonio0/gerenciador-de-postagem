@@ -18,9 +18,13 @@ export default async function handler(
   );
 
   try {
-    getPost().then((e) => {
-      res.status(200).json({ data: e });
-    });
+    getPost()
+      .then((e) => {
+        res.status(200).json({ data: e });
+      })
+      .catch((e) => {
+        res.status(404).json({ data: [] });
+      });
   } catch (error) {
     console.error("Error:", error); // caso falhe irá imprimir o erro
     res.status(400).json({ data: "erro" + error });
