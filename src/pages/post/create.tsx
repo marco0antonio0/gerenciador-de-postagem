@@ -94,7 +94,7 @@ export default function Home() {
             del={false}
             text="create"
             fn={async () => {
-              var temp = await VeryfyByToken({ token: auth.currentUser?.uid! });
+              var temp = await VeryfyByToken();
               if (temp) {
                 createPost({ data: data });
                 r.push("/post");
