@@ -1,0 +1,198 @@
+import { useEffect, useState } from "react";
+import { auth } from "@/firebase.config";
+import { useRouter } from "next/router";
+import TokenManager from "@/services/cookies";
+import {
+  createPost,
+  delPostByKey,
+  getPostByKey,
+  setPostByKey,
+} from "@/services/post";
+import VeryfyByToken from "@/services/verifyToken";
+import TopBar from "@/components/topBarV2";
+import Markdown from "react-markdown";
+type Data = {
+  title: string;
+  text: string;
+};
+export default function Home() {
+  const [data, setdata] = useState<Data>({ title: "", text: "" });
+  const [load, setload] = useState<boolean>(false);
+  const [ViewState, setViewState] = useState<boolean>(false);
+  const [switchPreview, setswitchPreview] = useState<boolean>(false);
+
+  const r = useRouter();
+  const { t } = r.query;
+  useEffect(() => {
+    var temp = TokenManager.getToken();
+    if (!temp) {
+      r.push("/login");
+    }
+    if (!load) {
+      if (t) {
+        getPostByKey(t as string)
+          .then((e: any) => {
+            setdata(e);
+            setload(true);
+          })
+          .catch((e) => {
+            setload(true);
+          });
+      }
+    }
+  });
+
+  return (
+    <main className={`flex flex-col w-full  border-x-2 m-auto`}>
+      <TopBar state={[false, true, false]} />
+      <div
+        className={`m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center mdx:w-full `}
+      >
+        {/* ============================================================ */}
+        <h1 className=" m-auto my-5 text-3xl  font-bold ">Editar - post</h1>
+        {/*===================================== */}
+        <div className="flex flex-row gap-3">
+          {/* ============================================================ */}
+          <Button
+            text={`${ViewState ? "enable" : "disable"} view`}
+            fn={() => {
+              setViewState((e) => (e ? false : true));
+            }}
+            del={false}
+          />
+        </div>
+        {/* ============================================================ */}
+        {/*                 widget input >>> title */}
+        <h3 className="w-10/12 m-auto px-5 py-3   ">title</h3>
+        <input
+          placeholder="digite . . ."
+          value={data["title"]}
+          type="text"
+          className="h-auto w-10/12 border-2 m-auto my-0 px-5 py-3  "
+          onChange={(e) =>
+            setdata((data) => {
+              return { ...data, ["title"]: e.target.value };
+            })
+          }
+        />
+        {/* ============================================================ */}
+        {/*                 widget input >>> text */}
+        {ViewState ? null : (
+          <>
+            <h3 className="w-10/12 m-auto px-5 py-3  ">text</h3>
+            <textarea
+              placeholder="digite . . ."
+              value={data["text"]}
+              rows={10}
+              className="h-auto w-10/12 border-2 m-auto my-0 px-5 py-3"
+              onChange={(e) =>
+                setdata((data) => {
+                  return { ...data, ["text"]: e.target.value };
+                })
+              }
+            />
+          </>
+        )}
+
+        {/* ============================================================ */}
+      </div>
+      <ViewEnable setdata={setdata} data={data} state={ViewState} />
+      <div className="m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center sm:w-full mb-10 mt-8">
+        {/* ============================================================ */}
+        {/*                 widget button >>> save */}
+
+        <div className="flex flex-row gap-5">
+          <Button
+            del={false}
+            text="save"
+            fn={async () => {
+              var temp = await VeryfyByToken();
+              if (temp) {
+                setPostByKey(t as string, data);
+                r.push("/post");
+              }
+            }}
+          />
+          {/* ============================================================ */}
+          {/*                 widget button >>> delete */}
+          <Button
+            del={true}
+            text="delete"
+            fn={async () => {
+              var temp = await VeryfyByToken();
+              if (temp) {
+                delPostByKey(t as string);
+                r.push("/post");
+              }
+            }}
+          />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function Button({
+  fn,
+  text,
+  del,
+}: {
+  fn: Function;
+  text: string;
+  del: boolean;
+}) {
+  return (
+    <div
+      className={`w-36 h-14 ${
+        del ? "bg-red-500" : " bg-green-300"
+      } flex flex-col m-auto mt-0 mb-0 shadow-sm cursor-pointer select-none active:scale-[1.05]`}
+      onClick={() => {
+        fn();
+      }}
+    >
+      <span className="m-auto text-white">{text}</span>
+    </div>
+  );
+}
+
+function ViewEnable({
+  setdata,
+  data,
+  state,
+}: {
+  setdata: Function;
+  data: Data;
+  state: boolean;
+}) {
+  {
+    return state ? (
+      <>
+        <div className="w-full flex flex-row gap-5 px-5 mdx:flex-col">
+          {/* ================================================================= */}
+          <div className="flex flex-col w-1/2 mdx:w-11/12 mdx:m-auto mdx:my-0 ">
+            <h3 className="w-full m-auto px-5 py-3  mb-0 mt-0">text</h3>
+            <textarea
+              placeholder="digite . . ."
+              value={data["text"]}
+              rows={10}
+              className="h-auto w-full border-2 m-auto my-0 px-5 py-3 mdx:mx-2"
+              onChange={(e) =>
+                setdata((data: Data) => {
+                  return { ...data, ["text"]: e.target.value };
+                })
+              }
+            />
+          </div>
+          {/* ================================================================= */}
+          <div className="flex flex-col w-1/2 mdx:w-11/12 mdx:m-auto mdx:my-0">
+            <h3 className="w-full m-auto px-5 py-3  mb-0 mt-0">Preview text</h3>
+            <div className="w-full border-2 m-auto my-0 px-5 py-3 mt-0 mdx:mx-2">
+              <Markdown className={"prose"}>{data.text}</Markdown>
+            </div>
+          </div>
+          {/* ================================================================= */}
+        </div>
+      </>
+    ) : null;
+  }
+}
