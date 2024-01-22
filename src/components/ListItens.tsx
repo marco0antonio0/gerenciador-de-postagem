@@ -30,8 +30,8 @@ export default function Listitens({ post, postPrincipal }: any) {
             key={i}
             imgPath="/img/icon-edit.png"
             title={
-              e.title.length > 25
-                ? e.title.substring(0, 25) + " [...]"
+              e.title.length > 20
+                ? e.title.substring(0, 20) + " [...]"
                 : e.title
             }
             fn={() => {

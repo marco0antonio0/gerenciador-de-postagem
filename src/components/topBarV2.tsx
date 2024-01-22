@@ -23,17 +23,18 @@ function LayoutSmartphone({ state }: { state: any }) {
   return (
     <>
       {/* ========================================================================= */}
-      <div className="flex flex-row w-full  h-32 sm1:h-24">
+      <div className="flex flex-row w-full h-32 sm1:h-24">
         <img
           src="/img/logo-nnew.png"
           alt=""
           className="h-full w-auto p-5 ml-14 sm:ml-5 "
         />
+
         <img
           onClick={() => {
             setMenuState((y) => (y ? false : true));
           }}
-          src="/images/iconMenu-portifoio.png"
+          src="/img/iconMenu-portifoio.png"
           alt=""
           className="h-auto w-12 m-auto mr-16 cursor-pointer active:scale-[1.05] select-none"
         />
