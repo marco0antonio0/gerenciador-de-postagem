@@ -9,49 +9,51 @@ import { auth } from "@/firebase.config";
 import Head from "next/head";
 export default function Home() {
   const [tentativas, settentativas] = useState<number>(0);
-  const [post, setpost] = useState([]);
-  const [textPrincipal, settextPrincipal] = useState([]);
+  const [post, setpost] = useState({ data: [] });
+  const [textPrincipal, settextPrincipal] = useState({ title: "" });
   const [load, setload] = useState<boolean>(true);
+  const [load2, setload2] = useState<boolean>(true);
+  const [cokieess, setcokieess] = useState("");
   const r = useRouter();
   const maxTentativas = 5;
   useEffect(() => {
     var temp = TokenManager.getToken();
+    setcokieess(temp! ? temp : "");
     if (!temp) {
       r.push("/login");
     }
-    if (load || tentativas < maxTentativas) {
-      VeryfyByToken().then((e) => {
-        if (e) {
-          getPostByKey("textoPrincipal", { prefix: "/" })
-            .then((e: any) => {
-              console.log(e);
-              settextPrincipal(e);
-            })
-            .catch((e) => {
-              settextPrincipal([]);
-            })
-            .catch((e) => {});
 
-          getPost()
-            .then((e: any) => {
-              setpost(e);
-              setload(false);
-              settentativas((e: number) => {
-                var instance = 1 + e;
-                return instance;
-              });
-            })
-            .catch((e) => {
-              settentativas((e: number) => {
-                var instance = 1 + e;
-                return instance;
-              });
-
-              setload(false);
-              setpost(e);
-            });
-        }
-      });
+    if (load) {
+      fetch("http://localhost:3001/api/post", {
+        method: "GET",
+      })
+        .then((e: any) => {
+          return e.json();
+        })
+        .then((e: any) => {
+          try {
+            setload(false);
+            setpost(e.data);
+          } catch (error) {}
+        });
+    }
+    //
+    if (load2) {
+      fetch("http://localhost:3001/api/post-main", {
+        method: "GET",
+        headers: {
+          Authorization: cokieess,
+        },
+      })
+        .then((e: any) => {
+          return e.json();
+        })
+        .then((e: any) => {
+          try {
+            setload2(false);
+            settextPrincipal(e.data);
+          } catch (error) {}
+        });
     }
   }, [post, load]);
   return (

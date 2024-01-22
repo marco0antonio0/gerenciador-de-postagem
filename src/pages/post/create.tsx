@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { auth } from "@/firebase.config";
 import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
-import {
-  createPost,
-  delPostByKey,
-  getPostByKey,
-  setPostByKey,
-} from "@/services/post";
+import { createPost } from "@/services/post";
 import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
@@ -20,10 +15,12 @@ export default function Home() {
   const [load, setload] = useState<boolean>(false);
   const [ViewState, setViewState] = useState<boolean>(false);
   const [switchPreview, setswitchPreview] = useState<boolean>(false);
+  const [cokieess, setcokieess] = useState("");
 
   const r = useRouter();
   useEffect(() => {
     var temp = TokenManager.getToken();
+    setcokieess(temp! ? temp : "");
     if (!temp) {
       r.push("/login");
     }
@@ -94,11 +91,19 @@ export default function Home() {
             del={false}
             text="create"
             fn={async () => {
-              var temp = await VeryfyByToken();
-              if (temp) {
-                createPost({ data: data });
-                r.push("/post");
-              }
+              fetch("https://api-gestor.nova-work.cloud/api/post", {
+                method: "POST",
+                headers: {
+                  Authorization: cokieess,
+                },
+                body: JSON.stringify({ title: data.title, text: data.text }),
+              })
+                .then((e) => e.json())
+                .then((e) => {
+                  if (e.status == true) {
+                    r.push("/post");
+                  }
+                });
             }}
           />
           {/* ============================================================ */}

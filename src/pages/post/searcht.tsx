@@ -14,23 +14,32 @@ export default function Home() {
   const [data, setdata] = useState<Data>({ title: "", text: "" });
   const [load, setload] = useState<boolean>(false);
   const [ViewState, setViewState] = useState<boolean>(false);
+  const [cokieess, setcokieess] = useState("");
 
   const r = useRouter();
   const { t } = r.query;
   useEffect(() => {
     var temp = TokenManager.getToken();
+    setcokieess(temp! ? temp : "");
     if (!temp) {
       r.push("/login");
     }
     if (!load) {
       if (t) {
-        getPostByKey(t as string, { prefix: "/" })
+        fetch("https://api-gestor.nova-work.cloud/api/post-main", {
+          method: "GET",
+          headers: {
+            Authorization: cokieess,
+          },
+        })
           .then((e: any) => {
-            setdata(e);
-            setload(true);
+            return e.json();
           })
-          .catch((e) => {
-            setload(true);
+          .then((e: any) => {
+            try {
+              setload(true);
+              setdata(e.data);
+            } catch (error) {}
           });
       }
     }
@@ -100,11 +109,23 @@ export default function Home() {
             del={false}
             text="save"
             fn={async () => {
-              var temp = await VeryfyByToken();
-              if (temp) {
-                setPostByKeyTextPrincipal(data);
-                r.push("/post");
-              }
+              fetch("https://api-gestor.nova-work.cloud/api/post-main", {
+                method: "PUT",
+                headers: {
+                  Authorization: cokieess,
+                },
+                body: JSON.stringify({ title: data.title, text: data.text }),
+              })
+                .then((e: any) => {
+                  return e.json();
+                })
+                .then((e: any) => {
+                  try {
+                    if (e.status) {
+                      r.push("/post");
+                    }
+                  } catch (error) {}
+                });
             }}
           />
         </div>

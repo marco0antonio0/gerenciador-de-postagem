@@ -9,9 +9,7 @@ import ValidAuth from "@/services/reauthenticate";
 import VeryfyByToken from "@/services/verifyToken";
 import Head from "next/head";
 export default function Home() {
-  const [data, setdata] = useState("");
   const [post, setpost] = useState([]);
-  const [load, setload] = useState<boolean>(true);
   const r = useRouter();
   useEffect(() => {
     var temp = TokenManager.getToken();

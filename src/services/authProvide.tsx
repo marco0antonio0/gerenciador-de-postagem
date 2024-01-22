@@ -15,7 +15,6 @@ type Format = {
   dataFetch: string;
   setdataFetch: Function;
   authCheck: boolean;
-  isAuth: Function;
 };
 
 export const AuthContext = createContext({} as Format);
@@ -25,24 +24,22 @@ export default function ProviderAuthContex({ children }: { children: any }) {
   const [dataFetch, setdataFetch] = useState("");
   const [authCheck, setauthCheck] = useState(false);
   // ===================================================
-  async function isAuth(user: User) {
-    const auth = getAuth(appxx);
-    var temp = await signInWithEmailAndPassword(auth, user.name, user.password)
-      .then((e) => {
-        setauthCheck(true);
-        TokenManager.setToken(e.user.uid!);
-      })
-      .catch((e) => {
-        setauthCheck(false);
-        TokenManager.setToken("");
-      });
-    return temp;
-  }
+  // async function isAuth(user: User) {
+  //   const auth = getAuth(appxx);
+  //   var temp = await signInWithEmailAndPassword(auth, user.name, user.password)
+  //     .then((e) => {
+  //       setauthCheck(true);
+  //       TokenManager.setToken(e.user.uid!);
+  //     })
+  //     .catch((e) => {
+  //       setauthCheck(false);
+  //       TokenManager.setToken("");
+  //     });
+  //   return temp;
+  // }
   return (
     <>
-      <AuthContext.Provider
-        value={{ dataFetch, setdataFetch, authCheck, isAuth }}
-      >
+      <AuthContext.Provider value={{ dataFetch, setdataFetch, authCheck }}>
         {children}
       </AuthContext.Provider>
     </>

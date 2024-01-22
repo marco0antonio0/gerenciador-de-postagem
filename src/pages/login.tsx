@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 
 export default function Home() {
-  const { isAuth, authCheck } = useContext(AuthContext);
+  const { authCheck } = useContext(AuthContext);
   const [data, setdata] = useState({ name: "", password: "" });
   const [post, setpost] = useState();
   const [err, seterr] = useState({ name: false, password: false });
@@ -23,10 +23,28 @@ export default function Home() {
   function fn() {
     // console.log(data);
     if (!err.name && !err.password) {
-      isAuth(data);
-      if (!authCheck) {
-        seterrCredentials(true);
-      }
+      fetch("https://api-gestor.nova-work.cloud/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email: data.name, password: data.password }),
+      })
+        .then((e) => e.json())
+        .then((e) => {
+          try {
+            if (e.token) {
+              TokenManager.setToken(e.token);
+              seterrCredentials(false);
+              r.push("/post");
+            } else {
+              seterrCredentials(true);
+            }
+          } catch (error) {
+            seterrCredentials(true);
+          }
+        });
+      // isAuth(data);
+      // if (!authCheck) {
+      //   seterrCredentials(true);
+      // }
     } else {
       console.log(err);
     }

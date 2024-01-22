@@ -14,23 +14,33 @@ export default function Home() {
   const [data, setdata] = useState<Data>({ title: "", text: "" });
   const [load, setload] = useState<boolean>(false);
   const [ViewState, setViewState] = useState<boolean>(false);
+  const [cokieess, setcokieess] = useState("");
 
   const r = useRouter();
   const { t } = r.query;
   useEffect(() => {
     var temp = TokenManager.getToken();
+    setcokieess(temp! ? temp : "");
     if (!temp) {
       r.push("/login");
     }
+
     if (!load) {
       if (t) {
-        getPostByKey(t as string, { prefix: "post/" })
+        fetch("https://api-gestor.nova-work.cloud/api/post-key?key=" + t, {
+          method: "GET",
+          headers: {
+            Authorization: cokieess,
+          },
+        })
           .then((e: any) => {
-            setdata(e);
-            setload(true);
+            return e.json();
           })
-          .catch((e) => {
-            setload(true);
+          .then((e: any) => {
+            try {
+              setload(true);
+              setdata(e.data);
+            } catch (error) {}
           });
       }
     }
@@ -113,11 +123,23 @@ export default function Home() {
             del={false}
             text="save"
             fn={async () => {
-              var temp = await VeryfyByToken();
-              if (temp) {
-                setPostByKey(t as string, data);
-                r.push("/post");
-              }
+              fetch("https://api-gestor.nova-work.cloud/api/post", {
+                method: "PUT",
+                headers: {
+                  Authorization: cokieess,
+                },
+                body: JSON.stringify({
+                  key: t,
+                  title: data.title,
+                  text: data.text,
+                }),
+              })
+                .then((e) => e.json())
+                .then((e) => {
+                  if (e.status) {
+                    r.push("/post");
+                  }
+                });
             }}
           />
           {/* ============================================================ */}
@@ -126,11 +148,21 @@ export default function Home() {
             del={true}
             text="delete"
             fn={async () => {
-              var temp = await VeryfyByToken();
-              if (temp) {
-                delPostByKey(t as string);
-                r.push("/post");
-              }
+              fetch("https://api-gestor.nova-work.cloud/api/post", {
+                method: "DELETE",
+                headers: {
+                  Authorization: cokieess,
+                },
+                body: JSON.stringify({
+                  key: t,
+                }),
+              })
+                .then((e) => e.json())
+                .then((e) => {
+                  if (e.status) {
+                    r.push("/post");
+                  }
+                });
             }}
           />
         </div>
