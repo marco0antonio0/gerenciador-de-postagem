@@ -24,8 +24,11 @@ export default function Home() {
     }
 
     if (load) {
-      fetch("http://localhost:3001/api/post", {
+      fetch("https://api-gestor.nova-work.cloud/api/post", {
         method: "GET",
+        headers: {
+          Authorization: cokieess,
+        },
       })
         .then((e: any) => {
           return e.json();
@@ -39,7 +42,7 @@ export default function Home() {
     }
     //
     if (load2) {
-      fetch("http://localhost:3001/api/post-main", {
+      fetch("https://api-gestor.nova-work.cloud/api/post-main", {
         method: "GET",
         headers: {
           Authorization: cokieess,
