@@ -14,7 +14,6 @@ export default function Home() {
   const [data, setdata] = useState<Data>({ title: "", text: "" });
   const [load, setload] = useState<boolean>(false);
   const [ViewState, setViewState] = useState<boolean>(false);
-  const [switchPreview, setswitchPreview] = useState<boolean>(false);
 
   const r = useRouter();
   const { t } = r.query;
@@ -39,7 +38,7 @@ export default function Home() {
 
   return (
     <main className={`flex flex-col w-full  border-x-2 m-auto`}>
-      <TopBar state={[false, true, false]} />
+      <TopBar state={[false, false, false]} />
       <div
         className={`m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center mdx:w-full `}
       >

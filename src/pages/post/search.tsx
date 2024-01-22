@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
-import {
-  createPost,
-  delPostByKey,
-  getPostByKey,
-  setPostByKey,
-} from "@/services/post";
+import { delPostByKey, getPostByKey, setPostByKey } from "@/services/post";
 import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
@@ -19,7 +14,6 @@ export default function Home() {
   const [data, setdata] = useState<Data>({ title: "", text: "" });
   const [load, setload] = useState<boolean>(false);
   const [ViewState, setViewState] = useState<boolean>(false);
-  const [switchPreview, setswitchPreview] = useState<boolean>(false);
 
   const r = useRouter();
   const { t } = r.query;
@@ -57,7 +51,7 @@ export default function Home() {
         />
         <meta name="robots" content="index, follow" />
       </Head>
-      <TopBar state={[false, true, false]} />
+      <TopBar state={[false, false, false]} />
       <div
         className={`m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center mdx:w-full `}
       >
