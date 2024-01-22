@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/services/authProvide";
 import TokenManager from "@/services/cookies";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export default function Home() {
   const { isAuth, authCheck } = useContext(AuthContext);
@@ -138,6 +139,19 @@ function ComponentsInput({
 }) {
   return (
     <>
+      <Head>
+        <title>Login</title>
+        <meta name="description" content="cms gestor de conteudos" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+
+        <meta
+          name="keywords"
+          content="me adote Belém, adoção de animais em Belém, adotar cachorro em Belém, adotar gato em Belém, projeto de extensão adoção de animais em Belém"
+        />
+        <meta name="robots" content="index, follow" />
+      </Head>
       <h3
         className={`sm:font-normal sm:mt-4 sm:mb-1 m-auto mb-3 ml-10 mt-5 ${
           err ? "text-red-400" : ""

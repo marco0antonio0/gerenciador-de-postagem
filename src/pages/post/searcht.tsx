@@ -5,6 +5,7 @@ import { getPostByKey, setPostByKeyTextPrincipal } from "@/services/post";
 import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
+import Head from "next/head";
 type Data = {
   title: string;
   text: string;
@@ -149,6 +150,22 @@ function ViewEnable({
     return state ? (
       <>
         <div className="w-full flex flex-row gap-5 px-5 mdx:flex-col">
+          <Head>
+            <title>Editar post principal</title>
+            <meta name="description" content="cms gestor de conteudos" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1"
+            />
+            <link rel="icon" href="/favicon.ico" />
+            <link rel="manifest" href="/manifest.json" />
+
+            <meta
+              name="keywords"
+              content="me adote Belém, adoção de animais em Belém, adotar cachorro em Belém, adotar gato em Belém, projeto de extensão adoção de animais em Belém"
+            />
+            <meta name="robots" content="index, follow" />
+          </Head>
           {/* ================================================================= */}
           <div className="flex flex-col w-1/2 mdx:w-11/12 mdx:m-auto mdx:my-0 ">
             <h3 className="w-full m-auto px-5 py-3  mb-0 mt-0">text</h3>

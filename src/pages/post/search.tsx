@@ -10,6 +10,7 @@ import {
 import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
+import Head from "next/head";
 type Data = {
   title: string;
   text: string;
@@ -43,6 +44,19 @@ export default function Home() {
 
   return (
     <main className={`flex flex-col w-full  border-x-2 m-auto`}>
+      <Head>
+        <title>Editar post</title>
+        <meta name="description" content="cms gestor de conteudos" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+
+        <meta
+          name="keywords"
+          content="me adote Belém, adoção de animais em Belém, adotar cachorro em Belém, adotar gato em Belém, projeto de extensão adoção de animais em Belém"
+        />
+        <meta name="robots" content="index, follow" />
+      </Head>
       <TopBar state={[false, true, false]} />
       <div
         className={`m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center mdx:w-full `}
