@@ -48,9 +48,9 @@ async function getPost() {
   });
 }
 // recupera apenas o dado fornecido pela key
-async function getPostByKey(key: string) {
+async function getPostByKey(key: string, { prefix }: { prefix: string }) {
   return new Promise((resolve, reject) => {
-    var reff = ref(db, "post/" + key);
+    var reff = ref(db, prefix + key);
     get(reff)
       .then((e) => {
         if (e.exists()) {
@@ -82,6 +82,25 @@ async function setPostByKey(key: string, data: Data) {
     return false;
   }
 }
+
+// atualiza o dado indicado pela key
+async function setPostByKeyTextPrincipal(data: Data) {
+  try {
+    const reff = ref(db, "textoPrincipal/");
+    if (data.title && data.text) {
+      update(reff, {
+        title: data.title,
+        text: data.text,
+      });
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+}
+
 // remove o dado indicado pela key
 async function delPostByKey(key: string) {
   try {
@@ -94,4 +113,11 @@ async function delPostByKey(key: string) {
   }
 }
 
-export { createPost, getPost, getPostByKey, setPostByKey, delPostByKey };
+export {
+  createPost,
+  getPost,
+  getPostByKey,
+  setPostByKey,
+  delPostByKey,
+  setPostByKeyTextPrincipal,
+};

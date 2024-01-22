@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
-import {
-  createPost,
-  delPostByKey,
-  getPostByKey,
-  setPostByKey,
-} from "@/services/post";
+import { getPostByKey, setPostByKeyTextPrincipal } from "@/services/post";
 import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
@@ -29,7 +24,7 @@ export default function Home() {
     }
     if (!load) {
       if (t) {
-        getPostByKey(t as string, { prefix: "post/" })
+        getPostByKey(t as string, { prefix: "/" })
           .then((e: any) => {
             setdata(e);
             setload(true);
@@ -107,20 +102,7 @@ export default function Home() {
             fn={async () => {
               var temp = await VeryfyByToken();
               if (temp) {
-                setPostByKey(t as string, data);
-                r.push("/post");
-              }
-            }}
-          />
-          {/* ============================================================ */}
-          {/*                 widget button >>> delete */}
-          <Button
-            del={true}
-            text="delete"
-            fn={async () => {
-              var temp = await VeryfyByToken();
-              if (temp) {
-                delPostByKey(t as string);
+                setPostByKeyTextPrincipal(data);
                 r.push("/post");
               }
             }}

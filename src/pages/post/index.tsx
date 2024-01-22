@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
 import TopBar from "@/components/topBarV2";
 import Listitens from "@/components/ListItens";
-import { getPost } from "@/services/post";
+import { getPost, getPostByKey } from "@/services/post";
 import VeryfyByToken from "@/services/verifyToken";
 import { auth } from "@/firebase.config";
 export default function Home() {
   const [tentativas, settentativas] = useState<number>(0);
   const [post, setpost] = useState([]);
+  const [textPrincipal, settextPrincipal] = useState([]);
   const [load, setload] = useState<boolean>(true);
   const r = useRouter();
   const maxTentativas = 5;
@@ -20,6 +21,16 @@ export default function Home() {
     if (load || tentativas < maxTentativas) {
       VeryfyByToken().then((e) => {
         if (e) {
+          getPostByKey("textoPrincipal", { prefix: "/" })
+            .then((e: any) => {
+              console.log(e);
+              settextPrincipal(e);
+            })
+            .catch((e) => {
+              settextPrincipal([]);
+            })
+            .catch((e) => {});
+
           getPost()
             .then((e: any) => {
               setpost(e);
@@ -51,7 +62,11 @@ export default function Home() {
       <div className="m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center sm:w-full">
         {/* ==================================================== */}
         {/*      Carregamento da lista de itens de 'post' */}
-        {!load ? <Listitens post={post} /> : <LoadInterface />}
+        {!load ? (
+          <Listitens post={post} postPrincipal={textPrincipal} />
+        ) : (
+          <LoadInterface />
+        )}
         {/* ==================================================== */}
       </div>
     </main>
