@@ -8,7 +8,11 @@ export default function Listitens({ post, postPrincipal }: any) {
       {postPrincipal ? (
         <Item
           imgPath="/img/icon-edit.png"
-          title={postPrincipal.title}
+          title={
+            postPrincipal.title.length > 20
+              ? postPrincipal.title.substring(0, 20) + "[...]"
+              : postPrincipal.title
+          }
           fn={() => {
             r.push("/post/searcht?t=" + "textoPrincipal");
           }}
@@ -25,7 +29,11 @@ export default function Listitens({ post, postPrincipal }: any) {
           <Item
             key={i}
             imgPath="/img/icon-edit.png"
-            title={e.title}
+            title={
+              e.title.length > 25
+                ? e.title.substring(0, 25) + " [...]"
+                : e.title
+            }
             fn={() => {
               r.push("/post/search?t=" + e.key);
             }}
@@ -44,6 +52,7 @@ export default function Listitens({ post, postPrincipal }: any) {
           r.push("/post/create");
         }}
       />
+      <div className="h-20"></div>
     </div>
   );
 }
