@@ -1,5 +1,6 @@
 # Gerenciador de Postagem
 
+![img](/imageReadme/walpaperPost1.png)
 Este projeto é um gerenciador de postagens desenvolvido em Next.js com persistência de dados NoSQL usando o Firebase Realtime Database. Ele facilita o gerenciamento de postagens para um site específico, [https://nova-work.cloud/](https://nova-work.cloud/).
 
 ## Funcionalidades
