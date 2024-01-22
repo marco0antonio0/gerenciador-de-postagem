@@ -1,9 +1,17 @@
 import TopBar from "@/components/topBarV2";
+import TokenManager from "@/services/cookies";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Home() {
   const r = useRouter();
+  useEffect(() => {
+    var temp = TokenManager.getToken();
+    if (!temp) {
+      r.push("/login");
+    }
+  });
   return (
     <main className={`flex flex-col w-full`}>
       <Head>
