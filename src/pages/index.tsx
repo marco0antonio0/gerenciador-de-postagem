@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
-import { auth, db } from "@/firebase.config";
-import { get, push, ref, set } from "firebase/database";
 import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
-import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { createPost, getPost } from "@/services/post";
-import ValidAuth from "@/services/reauthenticate";
-import VeryfyByToken from "@/services/verifyToken";
 import Head from "next/head";
 export default function Home() {
   const [post, setpost] = useState([]);
@@ -18,6 +12,25 @@ export default function Home() {
     } else {
       r.push("/post");
     }
+    //
+    //
+    fetch("https://api-gestor.nova-work.cloud:3000/api/verify-token", {
+      method: "POST",
+      body: JSON.stringify({ authorization: temp }),
+    })
+      .then((e) => e.json())
+      .then((e) => {
+        if (e.validate == false) {
+          TokenManager.setToken("");
+          r.push("/login");
+        }
+      })
+      .catch((e) => {
+        TokenManager.setToken("");
+        r.push("/login");
+      });
+    //
+    //
   }, [post]);
   return (
     <main

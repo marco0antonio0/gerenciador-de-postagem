@@ -3,32 +3,45 @@ import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
 import TopBar from "@/components/topBarV2";
 import Listitens from "@/components/ListItens";
-import { getPost, getPostByKey } from "@/services/post";
-import VeryfyByToken from "@/services/verifyToken";
-import { auth } from "@/firebase.config";
 import Head from "next/head";
 export default function Home() {
-  const [tentativas, settentativas] = useState<number>(0);
   const [post, setpost] = useState({ data: [] });
   const [textPrincipal, settextPrincipal] = useState({ title: "" });
   const [load, setload] = useState<boolean>(true);
   const [load2, setload2] = useState<boolean>(true);
   const [cokieess, setcokieess] = useState("");
   const r = useRouter();
-  const maxTentativas = 5;
   useEffect(() => {
     var temp = TokenManager.getToken();
-    setcokieess(temp! ? temp : "");
+    setcokieess(temp!);
     if (!temp) {
       r.push("/login");
     }
-
-    if (load) {
-      fetch("https://api-gestor.nova-work.cloud/api/post", {
-        method: "GET",
-        headers: {
-          Authorization: cokieess,
-        },
+    //
+    //
+    fetch("https://api-gestor.nova-work.cloud/api/verify-token", {
+      method: "POST",
+      body: JSON.stringify({ authorization: temp }),
+    })
+      .then((e) => e.json())
+      .then((e) => {
+        if (e.validate == false) {
+          TokenManager.setToken("");
+          r.push("/login");
+        }
+      })
+      .catch((e) => {
+        TokenManager.setToken("");
+        r.push("/login");
+      });
+    //
+    //
+    if (load && cokieess) {
+      fetch("https://api-gestor.nova-work.cloud/api/get-post", {
+        method: "POST",
+        body: JSON.stringify({
+          authorization: cokieess,
+        }),
       })
         .then((e: any) => {
           return e.json();
@@ -41,12 +54,12 @@ export default function Home() {
         });
     }
     //
-    if (load2) {
-      fetch("https://api-gestor.nova-work.cloud/api/post-main", {
-        method: "GET",
-        headers: {
-          Authorization: cokieess,
-        },
+    if (load2 && cokieess) {
+      fetch("https://api-gestor.nova-work.cloud/api/get-post-main", {
+        method: "POST",
+        body: JSON.stringify({
+          authorization: cokieess,
+        }),
       })
         .then((e: any) => {
           return e.json();
@@ -58,7 +71,7 @@ export default function Home() {
           } catch (error) {}
         });
     }
-  }, [post, load]);
+  }, [post, load, cokieess]);
   return (
     <main className={`flex flex-col w-full  border-x-2 m-auto`}>
       <Head>

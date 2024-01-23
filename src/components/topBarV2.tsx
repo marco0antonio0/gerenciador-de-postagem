@@ -1,4 +1,3 @@
-import { auth } from "@/firebase.config";
 import TokenManager from "@/services/cookies";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
@@ -70,12 +69,8 @@ function LayoutSmartphone({ state }: { state: any }) {
             !state[2] ? "opacity-50" : ""
           }`}
           onClick={() => {
-            signOut(auth)
-              .then((e) => {
-                TokenManager.setToken("");
-                r.push("/login");
-              })
-              .catch((e) => {});
+            TokenManager.setToken("");
+            r.push("/login");
           }}
         >
           <h1>sair</h1>
@@ -120,12 +115,8 @@ function LayoutDesktop({ state }: { state: any }) {
               !state[2] ? "opacity-50" : ""
             }`}
             onClick={() => {
-              signOut(auth)
-                .then((e) => {
-                  TokenManager.setToken("");
-                  r.push("/login");
-                })
-                .catch((e) => {});
+              TokenManager.setToken("");
+              r.push("/login");
             }}
           >
             <h1>sair</h1>

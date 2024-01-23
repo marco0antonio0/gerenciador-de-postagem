@@ -11,6 +11,25 @@ export default function Home() {
     if (!temp) {
       r.push("/login");
     }
+    //
+    //
+    fetch("https://api-gestor.nova-work.cloud/api/verify-token", {
+      method: "POST",
+      body: JSON.stringify({ authorization: temp }),
+    })
+      .then((e) => e.json())
+      .then((e) => {
+        if (e.validate == false) {
+          TokenManager.setToken("");
+          r.push("/login");
+        }
+      })
+      .catch((e) => {
+        TokenManager.setToken("");
+        r.push("/login");
+      });
+    //
+    //
   });
   return (
     <main className={`flex flex-col w-full`}>

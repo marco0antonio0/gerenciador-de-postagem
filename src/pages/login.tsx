@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/services/authProvide";
 import TokenManager from "@/services/cookies";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Home() {
-  const { authCheck } = useContext(AuthContext);
   const [data, setdata] = useState({ name: "", password: "" });
   const [post, setpost] = useState();
   const [err, seterr] = useState({ name: false, password: false });
   const [errCredentials, seterrCredentials] = useState(false);
   const [errRe, seterrRe] = useState(false);
+  const [recaptchLoad, setrecaptchLoad] = useState(false);
 
   const r = useRouter();
   useEffect(() => {
@@ -21,8 +21,7 @@ export default function Home() {
   });
 
   function fn() {
-    // console.log(data);
-    if (!err.name && !err.password) {
+    if (!err.name && !err.password && recaptchLoad) {
       fetch("https://api-gestor.nova-work.cloud/api/login", {
         method: "POST",
         body: JSON.stringify({ email: data.name, password: data.password }),
@@ -41,12 +40,7 @@ export default function Home() {
             seterrCredentials(true);
           }
         });
-      // isAuth(data);
-      // if (!authCheck) {
-      //   seterrCredentials(true);
-      // }
     } else {
-      console.log(err);
     }
   }
 
@@ -54,6 +48,19 @@ export default function Home() {
     <main
       className={`flex flex-col max-w-[500px] h-screen prose border-x-2 border-grey-400 m-auto sm:w-full`}
     >
+      <Head>
+        <title>Login</title>
+        <meta name="description" content="cms gestor de conteudos" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+
+        <meta
+          name="keywords"
+          content="me adote Belém, adoção de animais em Belém, adotar cachorro em Belém, adotar gato em Belém, projeto de extensão adoção de animais em Belém"
+        />
+        <meta name="robots" content="index, follow" />
+      </Head>
       <form
         onError={() => {}}
         action=""
@@ -108,8 +115,16 @@ export default function Home() {
             seterrCredentials(false);
           }}
         />
-
         {/* ============================================== */}
+        <div className="sm:font-normal sm:mt-4 sm:mb-1 m-auto mb-3 ml-10 mt-5 ">
+          <ReCAPTCHA
+            sitekey={`${process.env.KEYRECAPTCHA}`}
+            onChange={() => {
+              setrecaptchLoad(true);
+            }}
+          />
+        </div>
+        ,{/* ============================================== */}
         {errCredentials ? (
           <span className="m-auto mt-5 text-red-400">
             Email ou Senha incorretos
@@ -157,19 +172,6 @@ function ComponentsInput({
 }) {
   return (
     <>
-      <Head>
-        <title>Login</title>
-        <meta name="description" content="cms gestor de conteudos" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="manifest" href="/manifest.json" />
-
-        <meta
-          name="keywords"
-          content="me adote Belém, adoção de animais em Belém, adotar cachorro em Belém, adotar gato em Belém, projeto de extensão adoção de animais em Belém"
-        />
-        <meta name="robots" content="index, follow" />
-      </Head>
       <h3
         className={`sm:font-normal sm:mt-4 sm:mb-1 m-auto mb-3 ml-10 mt-5 ${
           err ? "text-red-400" : ""

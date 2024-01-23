@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import { auth } from "@/firebase.config";
 import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
-import { createPost } from "@/services/post";
-import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
 type Data = {
@@ -12,18 +9,35 @@ type Data = {
 };
 export default function Home() {
   const [data, setdata] = useState<Data>({ title: "", text: "" });
-  const [load, setload] = useState<boolean>(false);
   const [ViewState, setViewState] = useState<boolean>(false);
-  const [switchPreview, setswitchPreview] = useState<boolean>(false);
   const [cokieess, setcokieess] = useState("");
 
   const r = useRouter();
   useEffect(() => {
     var temp = TokenManager.getToken();
-    setcokieess(temp! ? temp : "");
+    setcokieess(temp!);
     if (!temp) {
       r.push("/login");
     }
+    //
+    //
+    fetch("https://api-gestor.nova-work.cloud/api/verify-token", {
+      method: "POST",
+      body: JSON.stringify({ authorization: temp }),
+    })
+      .then((e) => e.json())
+      .then((e) => {
+        if (e.validate == false) {
+          TokenManager.setToken("");
+          r.push("/login");
+        }
+      })
+      .catch((e) => {
+        TokenManager.setToken("");
+        r.push("/login");
+      });
+    //
+    //
   });
 
   return (
@@ -91,12 +105,13 @@ export default function Home() {
             del={false}
             text="create"
             fn={async () => {
-              fetch("https://api-gestor.nova-work.cloud/api/post", {
+              fetch("https://api-gestor.nova-work.cloud/api/create-post", {
                 method: "POST",
-                headers: {
-                  Authorization: cokieess,
-                },
-                body: JSON.stringify({ title: data.title, text: data.text }),
+                body: JSON.stringify({
+                  title: data.title,
+                  text: data.text,
+                  authorization: cokieess,
+                }),
               })
                 .then((e) => e.json())
                 .then((e) => {

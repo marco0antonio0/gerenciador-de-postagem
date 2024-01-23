@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
-import { getPostByKey, setPostByKeyTextPrincipal } from "@/services/post";
-import VeryfyByToken from "@/services/verifyToken";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
 import Head from "next/head";
@@ -20,17 +18,36 @@ export default function Home() {
   const { t } = r.query;
   useEffect(() => {
     var temp = TokenManager.getToken();
-    setcokieess(temp! ? temp : "");
+    setcokieess(temp!);
     if (!temp) {
       r.push("/login");
     }
+    //
+    //
+    fetch("https://api-gestor.nova-work.cloud/api/verify-token", {
+      method: "POST",
+      body: JSON.stringify({ authorization: temp }),
+    })
+      .then((e) => e.json())
+      .then((e) => {
+        if (e.validate == false) {
+          TokenManager.setToken("");
+          r.push("/login");
+        }
+      })
+      .catch((e) => {
+        TokenManager.setToken("");
+        r.push("/login");
+      });
+    //
+    //
     if (!load) {
       if (t) {
-        fetch("https://api-gestor.nova-work.cloud/api/post-main", {
-          method: "GET",
-          headers: {
-            Authorization: cokieess,
-          },
+        fetch("https://api-gestor.nova-work.cloud/api/get-post-main", {
+          method: "POST",
+          body: JSON.stringify({
+            authorization: cokieess,
+          }),
         })
           .then((e: any) => {
             return e.json();
@@ -38,12 +55,12 @@ export default function Home() {
           .then((e: any) => {
             try {
               setload(true);
-              setdata(e.data);
+              setdata({ title: e.data.title, text: e.data.text });
             } catch (error) {}
           });
       }
     }
-  });
+  }, [cokieess, data, load, t]);
 
   return (
     <main className={`flex flex-col w-full  border-x-2 m-auto`}>
@@ -69,7 +86,7 @@ export default function Home() {
         <h3 className="w-10/12 m-auto px-5 py-3   ">title</h3>
         <input
           placeholder="digite . . ."
-          value={data["title"]}
+          value={data.title}
           type="text"
           className="h-auto w-10/12 border-2 m-auto my-0 px-5 py-3  "
           onChange={(e) =>
@@ -85,7 +102,7 @@ export default function Home() {
             <h3 className="w-10/12 m-auto px-5 py-3  ">text</h3>
             <textarea
               placeholder="digite . . ."
-              value={data["text"]}
+              value={data.text}
               rows={10}
               className="h-auto w-10/12 border-2 m-auto my-0 px-5 py-3"
               onChange={(e) =>
@@ -109,12 +126,13 @@ export default function Home() {
             del={false}
             text="save"
             fn={async () => {
-              fetch("https://api-gestor.nova-work.cloud/api/post-main", {
-                method: "PUT",
-                headers: {
-                  Authorization: cokieess,
-                },
-                body: JSON.stringify({ title: data.title, text: data.text }),
+              fetch("https://api-gestor.nova-work.cloud/api/update-post-main", {
+                method: "POST",
+                body: JSON.stringify({
+                  title: data.title,
+                  text: data.text,
+                  authorization: cokieess,
+                }),
               })
                 .then((e: any) => {
                   return e.json();
