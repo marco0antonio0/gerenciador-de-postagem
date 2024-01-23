@@ -118,7 +118,7 @@ export default function Home() {
         {/* ============================================== */}
         <div className="sm:font-normal sm:mt-4 sm:mb-1 m-auto mb-3 ml-10 mt-5 ">
           <ReCAPTCHA
-            sitekey={`${process.env.KEYRECAPTCHA}`}
+            sitekey={`6Leq1UwpAAAAADxatYBkofbFlHJtqEPZbnL_S-XX`}
             onChange={() => {
               setrecaptchLoad(true);
             }}
