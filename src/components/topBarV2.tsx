@@ -1,5 +1,4 @@
 import TokenManager from "@/services/cookies";
-import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
