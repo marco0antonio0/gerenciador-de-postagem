@@ -14,7 +14,7 @@ export default function Home() {
     }
     //
     //
-    fetch("https://api-gestor.nova-work.cloud:3000/api/verify-token", {
+    fetch("https://api-gestor.nova-work.cloud/api/verify-token", {
       method: "POST",
       body: JSON.stringify({ authorization: temp }),
     })

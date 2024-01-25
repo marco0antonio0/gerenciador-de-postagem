@@ -43,7 +43,7 @@ export default function Home() {
     //
 
     if (load && t) {
-      fetch("https://api-gestor.nova-work.cloud/api/posts/post-key?key=" + t, {
+      fetch("https://api-gestor.nova-work.cloud/api/info/post-key?key=" + t, {
         method: "POST",
         body: JSON.stringify({
           authorization: cokieess,
@@ -138,18 +138,15 @@ export default function Home() {
             del={false}
             text="save"
             fn={async () => {
-              fetch(
-                "https://api-gestor.nova-work.cloud/api/posts/update-post",
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    key: t,
-                    authorization: cokieess,
-                    title: data.title,
-                    text: data.text,
-                  }),
-                }
-              )
+              fetch("https://api-gestor.nova-work.cloud/api/info/update-post", {
+                method: "POST",
+                body: JSON.stringify({
+                  key: t,
+                  authorization: cokieess,
+                  title: data.title,
+                  text: data.text,
+                }),
+              })
                 .then((e) => e.json())
                 .then((e) => {
                   if (e.status) {
@@ -164,16 +161,13 @@ export default function Home() {
             del={true}
             text="delete"
             fn={async () => {
-              fetch(
-                "https://api-gestor.nova-work.cloud/api/posts/delete-post",
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    key: t,
-                    authorization: cokieess,
-                  }),
-                }
-              )
+              fetch("https://api-gestor.nova-work.cloud/api/info/delete-post", {
+                method: "POST",
+                body: JSON.stringify({
+                  key: t,
+                  authorization: cokieess,
+                }),
+              })
                 .then((e) => e.json())
                 .then((e) => {
                   if (e.status) {

@@ -3,19 +3,16 @@ import { useRouter } from "next/router";
 import TokenManager from "@/services/cookies";
 import TopBar from "@/components/topBarV2";
 import Markdown from "react-markdown";
-import Head from "next/head";
 type Data = {
   title: string;
   text: string;
 };
 export default function Home() {
   const [data, setdata] = useState<Data>({ title: "", text: "" });
-  const [load, setload] = useState<boolean>(true);
   const [ViewState, setViewState] = useState<boolean>(false);
   const [cokieess, setcokieess] = useState("");
 
   const r = useRouter();
-  const { t } = r.query;
   useEffect(() => {
     var temp = TokenManager.getToken();
     setcokieess(temp!);
@@ -41,47 +38,16 @@ export default function Home() {
       });
     //
     //
-
-    if (load && t) {
-      fetch("https://api-gestor.nova-work.cloud/api/posts/post-key?key=" + t, {
-        method: "POST",
-        body: JSON.stringify({
-          authorization: cokieess,
-        }),
-      })
-        .then((e: any) => {
-          return e.json();
-        })
-        .then((e: any) => {
-          try {
-            setload(false);
-            setdata({ title: e.data.title, text: e.data.text });
-          } catch (error) {}
-        });
-    }
-  }, [cokieess, data, load, t]);
+  });
 
   return (
     <main className={`flex flex-col w-full  border-x-2 m-auto`}>
-      <Head>
-        <title>Editar post</title>
-        <meta name="description" content="cms gestor de conteudos" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="manifest" href="/manifest.json" />
-
-        <meta
-          name="keywords"
-          content="me adote Belém, adoção de animais em Belém, adotar cachorro em Belém, adotar gato em Belém, projeto de extensão adoção de animais em Belém"
-        />
-        <meta name="robots" content="index, follow" />
-      </Head>
-      <TopBar state={[false, false, false]} />
+      <TopBar />
       <div
         className={`m-auto  w-8/12 h-auto  flex flex-col content-center align-middle items-center mdx:w-full `}
       >
         {/* ============================================================ */}
-        <h1 className=" m-auto my-5 text-3xl  font-bold ">Editar - post</h1>
+        <h1 className=" m-auto my-5 text-3xl  font-bold ">Criar - post</h1>
         {/*===================================== */}
         <div className="flex flex-row gap-3">
           {/* ============================================================ */}
@@ -98,7 +64,7 @@ export default function Home() {
         <h3 className="w-10/12 m-auto px-5 py-3   ">title</h3>
         <input
           placeholder="digite . . ."
-          value={data.title}
+          value={data["title"]}
           type="text"
           className="h-auto w-10/12 border-2 m-auto my-0 px-5 py-3  "
           onChange={(e) =>
@@ -134,54 +100,28 @@ export default function Home() {
         {/*                 widget button >>> save */}
 
         <div className="flex flex-row gap-5">
+          {/* ============================================================ */}
           <Button
             del={false}
-            text="save"
+            text="create"
             fn={async () => {
-              fetch(
-                "https://api-gestor.nova-work.cloud/api/posts/update-post",
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    key: t,
-                    authorization: cokieess,
-                    title: data.title,
-                    text: data.text,
-                  }),
-                }
-              )
+              fetch("https://api-gestor.nova-work.cloud/api/info/create-post", {
+                method: "POST",
+                body: JSON.stringify({
+                  title: data.title,
+                  text: data.text,
+                  authorization: cokieess,
+                }),
+              })
                 .then((e) => e.json())
                 .then((e) => {
-                  if (e.status) {
+                  if (e.status == true) {
                     r.push("/post");
                   }
                 });
             }}
           />
           {/* ============================================================ */}
-          {/*                 widget button >>> delete */}
-          <Button
-            del={true}
-            text="delete"
-            fn={async () => {
-              fetch(
-                "https://api-gestor.nova-work.cloud/api/posts/delete-post",
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    key: t,
-                    authorization: cokieess,
-                  }),
-                }
-              )
-                .then((e) => e.json())
-                .then((e) => {
-                  if (e.status) {
-                    r.push("/post");
-                  }
-                });
-            }}
-          />
         </div>
       </div>
     </main>

@@ -105,14 +105,17 @@ export default function Home() {
             del={false}
             text="create"
             fn={async () => {
-              fetch("https://api-gestor.nova-work.cloud/api/create-post", {
-                method: "POST",
-                body: JSON.stringify({
-                  title: data.title,
-                  text: data.text,
-                  authorization: cokieess,
-                }),
-              })
+              fetch(
+                "https://api-gestor.nova-work.cloud/api/posts/create-post",
+                {
+                  method: "POST",
+                  body: JSON.stringify({
+                    title: data.title,
+                    text: data.text,
+                    authorization: cokieess,
+                  }),
+                }
+              )
                 .then((e) => e.json())
                 .then((e) => {
                   if (e.status == true) {

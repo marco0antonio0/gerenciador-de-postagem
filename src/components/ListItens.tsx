@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-export default function Listitens({ post, postPrincipal }: any) {
+export default function Listitens({ post, postPrincipal, infos }: any) {
   const r = useRouter();
   return (
     <div className="m-auto flex flex-col w-8/12  content-stretch gap-3 sm:w-full mt-10 sm:mt-5">
@@ -44,12 +44,42 @@ export default function Listitens({ post, postPrincipal }: any) {
           <img src="/img/notfound.png" alt="" className="w-8/12 m-auto" />
         </>
       )}
+      <h1 className=" m-auto my-5 text-3xl  font-bold ">
+        Informativos existentes
+      </h1>
+      {infos ? (
+        infos.map((e: any, i: any) => (
+          <Item
+            key={i}
+            imgPath="/img/icon-edit.png"
+            title={
+              e.title.length > 20
+                ? e.title.substring(0, 20) + " [...]"
+                : e.title
+            }
+            fn={() => {
+              r.push("/post/informativo/search?t=" + e.key);
+            }}
+          />
+        ))
+      ) : (
+        <>
+          <img src="/img/notfound.png" alt="" className="w-8/12 m-auto" />
+        </>
+      )}
       <h1 className=" m-auto my-5 text-3xl  font-bold ">Funções</h1>
       <Item
         imgPath="/img/icon-new-post.jpg"
         title="adicionar post"
         fn={() => {
           r.push("/post/create");
+        }}
+      />
+      <Item
+        imgPath="/img/icon-new-post.jpg"
+        title="adicionar informativo"
+        fn={() => {
+          r.push("/post/informativo/create");
         }}
       />
       <div className="h-20"></div>

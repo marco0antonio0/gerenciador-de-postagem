@@ -4,11 +4,14 @@ import TokenManager from "@/services/cookies";
 import TopBar from "@/components/topBarV2";
 import Listitens from "@/components/ListItens";
 import Head from "next/head";
+import { info } from "console";
 export default function Home() {
   const [post, setpost] = useState({ data: [] });
+  const [infos, setinfos] = useState({ data: [] });
   const [textPrincipal, settextPrincipal] = useState({ title: "" });
   const [load, setload] = useState<boolean>(true);
   const [load2, setload2] = useState<boolean>(true);
+  const [load3, setload3] = useState<boolean>(true);
   const [cokieess, setcokieess] = useState("");
   const r = useRouter();
   useEffect(() => {
@@ -37,7 +40,7 @@ export default function Home() {
     //
     //
     if (load && cokieess) {
-      fetch("https://api-gestor.nova-work.cloud/api/get-post", {
+      fetch("https://api-gestor.nova-work.cloud/api/posts/get-post", {
         method: "POST",
         body: JSON.stringify({
           authorization: cokieess,
@@ -71,7 +74,28 @@ export default function Home() {
           } catch (error) {}
         });
     }
-  }, [post, load, cokieess]);
+    //
+    if (load3 && cokieess) {
+      fetch("https://api-gestor.nova-work.cloud/api/info/get-post", {
+        method: "POST",
+        body: JSON.stringify({
+          authorization: cokieess,
+        }),
+      })
+        .then((e: any) => {
+          return e.json();
+        })
+        .then((e: any) => {
+          try {
+            setload3(false);
+            if (e.data.length != 0 && typeof e.data != "undefined") {
+              setinfos(e);
+            }
+          } catch (error) {}
+        });
+    }
+    //
+  }, [post, load, load2, load3, cokieess]);
   return (
     <main className={`flex flex-col w-full  border-x-2 m-auto`}>
       <Head>
@@ -95,7 +119,11 @@ export default function Home() {
         {/* ==================================================== */}
         {/*      Carregamento da lista de itens de 'post' */}
         {!load ? (
-          <Listitens post={post} postPrincipal={textPrincipal} />
+          <Listitens
+            post={post}
+            postPrincipal={textPrincipal}
+            infos={infos.data}
+          />
         ) : (
           <LoadInterface />
         )}
